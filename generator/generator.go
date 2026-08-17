@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"text/template"
 
-	"github.com/dundunlabs/p2b/prisma"
+	"github.com/dundunlabs/p2b/prisma-generator"
 )
 
 //go:embed templates/models.gotpl

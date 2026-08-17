@@ -9,7 +9,7 @@ import (
 
 	"github.com/dundunlabs/p2b/generator"
 	"github.com/dundunlabs/p2b/jsonrpc"
-	"github.com/dundunlabs/p2b/prisma"
+	"github.com/dundunlabs/p2b/prisma-generator"
 )
 
 func main() {
