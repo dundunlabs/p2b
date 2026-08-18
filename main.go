@@ -14,6 +14,9 @@ import (
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
+	maxCapacity := 10 * 1024 * 1024
+	buf := make([]byte, 0, 64*1024)
+	scanner.Buffer(buf, maxCapacity)
 
 	for scanner.Scan() {
 		req, err := jsonrpc.Read(scanner.Bytes())

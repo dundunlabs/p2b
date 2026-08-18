@@ -8,10 +8,6 @@ type Generator struct {
 	Output Output `json:"output"`
 }
 
-type Model struct {
-	Name string `json:"name"`
-}
-
 type Datamodel struct {
 	Models []Model `json:"models"`
 }

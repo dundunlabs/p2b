@@ -1,7 +1,9 @@
 package generator
 
 import (
+	"bytes"
 	_ "embed"
+	"go/format"
 	"os"
 	"path/filepath"
 	"text/template"
@@ -38,5 +40,16 @@ func (g *Generator) Generate() error {
 	}
 	defer file.Close()
 
-	return modelsTpl.Execute(file, g.params.DMMF)
+	var data bytes.Buffer
+	if err := modelsTpl.Execute(&data, g.params.DMMF); err != nil {
+		return err
+	}
+
+	content, err := format.Source(data.Bytes())
+	if err != nil {
+		return err
+	}
+
+	_, err = file.Write(content)
+	return err
 }
