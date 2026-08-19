@@ -10,6 +10,14 @@ import (
 type Model struct {
 	Name   string  `json:"name"`
 	Fields []Field `json:"fields"`
+	DBName string  `json:"dbName"`
+}
+
+func (m Model) Table() string {
+	if m.DBName != "" {
+		return m.DBName
+	}
+	return m.Name
 }
 
 type Field struct {
@@ -18,9 +26,19 @@ type Field struct {
 	PK       bool      `json:"isId"`
 	Required bool      `json:"isRequired"`
 	Unique   bool      `json:"isUnique"`
+	DBName   string    `json:"dbName"`
 }
 
-func (f Field) Tags() (tags string) {
+func (f Field) dbName() string {
+	if f.DBName != "" {
+		return f.DBName
+	}
+	return string(f.Name)
+}
+
+func (f Field) Tags() string {
+	tags := f.dbName() + ",nullzero"
+
 	if f.PK {
 		tags += ",pk"
 	}
@@ -31,9 +49,6 @@ func (f Field) Tags() (tags string) {
 		tags += ",unique"
 	}
 
-	if tags == "" {
-		return ""
-	}
 	return fmt.Sprintf("`bun:\"%s\"`", tags)
 }
 
@@ -67,6 +82,8 @@ func (ft FieldType) String() string {
 		return "int"
 	case "String":
 		return "string"
+	case "DateTime":
+		return "time.Time"
 	default:
 		return string(ft)
 	}

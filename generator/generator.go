@@ -3,12 +3,12 @@ package generator
 import (
 	"bytes"
 	_ "embed"
-	"go/format"
 	"os"
 	"path/filepath"
 	"text/template"
 
 	"github.com/dundunlabs/p2b/prisma-generator"
+	"golang.org/x/tools/imports"
 )
 
 //go:embed templates/models.gotpl
@@ -34,7 +34,8 @@ func (g *Generator) Generate() error {
 		return err
 	}
 
-	file, err := os.Create(filepath.Join(dir, filename))
+	output := filepath.Join(dir, filename)
+	file, err := os.Create(output)
 	if err != nil {
 		return err
 	}
@@ -45,7 +46,7 @@ func (g *Generator) Generate() error {
 		return err
 	}
 
-	content, err := format.Source(data.Bytes())
+	content, err := imports.Process(output, data.Bytes(), nil)
 	if err != nil {
 		return err
 	}

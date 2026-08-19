@@ -2,8 +2,17 @@
 
 package model
 
+import (
+	"time"
+
+	"github.com/uptrace/bun"
+)
+
 type User struct {
-	ID    int `bun:",pk,notnull"`
-	Name  string
-	Email string `bun:",notnull,unique"`
+	bun.BaseModel `bun:"table:User"`
+
+	ID        int       `bun:"id,nullzero,pk,notnull"`
+	Name      string    `bun:"name,nullzero"`
+	Email     string    `bun:"email,nullzero,notnull,unique"`
+	CreatedAt time.Time `bun:"created_at,nullzero,notnull"`
 }
