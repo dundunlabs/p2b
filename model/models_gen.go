@@ -8,6 +8,13 @@ import (
 	"github.com/uptrace/bun"
 )
 
+type Role string
+
+const (
+	RoleUser  Role = "USER"
+	RoleAdmin Role = "ADMIN"
+)
+
 type User struct {
 	bun.BaseModel `bun:"table:User"`
 
@@ -15,4 +22,5 @@ type User struct {
 	Name      string    `bun:"name,nullzero"`
 	Email     string    `bun:"email,nullzero,notnull,unique"`
 	CreatedAt time.Time `bun:"created_at,nullzero,notnull"`
+	Role      Role      `bun:"role,nullzero,notnull"`
 }

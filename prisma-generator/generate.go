@@ -9,6 +9,7 @@ type Generator struct {
 }
 
 type Datamodel struct {
+	Enums  []Enum  `json:"enums"`
 	Models []Model `json:"models"`
 }
 

@@ -2,42 +2,23 @@ package prisma
 
 import (
 	"fmt"
-	"strings"
-	"unicode"
-	"unicode/utf8"
 )
 
 type Model struct {
-	Name   string  `json:"name"`
+	PrismaName
 	Fields []Field `json:"fields"`
-	DBName string  `json:"dbName"`
-}
-
-func (m Model) Table() string {
-	if m.DBName != "" {
-		return m.DBName
-	}
-	return m.Name
 }
 
 type Field struct {
-	Name     FieldName `json:"name"`
+	PrismaName
 	Type     FieldType `json:"type"`
 	PK       bool      `json:"isId"`
 	Required bool      `json:"isRequired"`
 	Unique   bool      `json:"isUnique"`
-	DBName   string    `json:"dbName"`
-}
-
-func (f Field) dbName() string {
-	if f.DBName != "" {
-		return f.DBName
-	}
-	return string(f.Name)
 }
 
 func (f Field) Tags() string {
-	tags := f.dbName() + ",nullzero"
+	tags := f.DBName() + ",nullzero"
 
 	if f.PK {
 		tags += ",pk"
@@ -50,28 +31,6 @@ func (f Field) Tags() string {
 	}
 
 	return fmt.Sprintf("`bun:\"%s\"`", tags)
-}
-
-type FieldName string
-
-func (fn FieldName) String() string {
-	s := string(fn)
-
-	// 1. Check for exact abbreviation matches
-	if val, exists := nameOverrides[strings.ToLower(s)]; exists {
-		return val
-	}
-
-	// 2. Fallback to standard first-letter capitalization
-	r, size := utf8.DecodeRuneInString(s)
-	if r == utf8.RuneError {
-		return s
-	}
-	return string(unicode.ToUpper(r)) + s[size:]
-}
-
-var nameOverrides = map[string]string{
-	"id": "ID",
 }
 
 type FieldType string

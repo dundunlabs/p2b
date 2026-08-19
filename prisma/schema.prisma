@@ -13,4 +13,10 @@ model User {
   name      String?
   email     String   @unique
   createdAt DateTime @default(now()) @map("created_at")
+  role      Role     @default(USER)
+}
+
+enum Role {
+  USER
+  ADMIN
 }

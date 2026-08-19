@@ -42,7 +42,7 @@ func (g *Generator) Generate() error {
 	defer file.Close()
 
 	var data bytes.Buffer
-	if err := modelsTpl.Execute(&data, g.params.DMMF); err != nil {
+	if err := modelsTpl.Execute(&data, g.params.DMMF.Datamodel); err != nil {
 		return err
 	}
 
