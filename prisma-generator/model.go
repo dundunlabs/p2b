@@ -1,6 +1,7 @@
 package prisma
 
 import (
+	"fmt"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -12,8 +13,28 @@ type Model struct {
 }
 
 type Field struct {
-	Name FieldName `json:"name"`
-	Type FieldType `json:"type"`
+	Name     FieldName `json:"name"`
+	Type     FieldType `json:"type"`
+	PK       bool      `json:"isId"`
+	Required bool      `json:"isRequired"`
+	Unique   bool      `json:"isUnique"`
+}
+
+func (f Field) Tags() (tags string) {
+	if f.PK {
+		tags += ",pk"
+	}
+	if f.Required {
+		tags += ",notnull"
+	}
+	if f.Unique {
+		tags += ",unique"
+	}
+
+	if tags == "" {
+		return ""
+	}
+	return fmt.Sprintf("`bun:\"%s\"`", tags)
 }
 
 type FieldName string

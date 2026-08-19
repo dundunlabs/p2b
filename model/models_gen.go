@@ -3,7 +3,7 @@
 package model
 
 type User struct {
-	ID    int
+	ID    int `bun:",pk,notnull"`
 	Name  string
-	Email string
+	Email string `bun:",notnull,unique"`
 }
