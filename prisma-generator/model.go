@@ -2,6 +2,7 @@ package prisma
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Model struct {
@@ -11,13 +12,27 @@ type Model struct {
 
 type Field struct {
 	PrismaName
-	Type     FieldType `json:"type"`
-	PK       bool      `json:"isId"`
-	Required bool      `json:"isRequired"`
-	Unique   bool      `json:"isUnique"`
+	Type               string   `json:"type"`
+	Kind               string   `json:"kind"`
+	PK                 bool     `json:"isId"`
+	List               bool     `json:"isList"`
+	Required           bool     `json:"isRequired"`
+	Unique             bool     `json:"isUnique"`
+	RelationFromFields []string `json:"relationFromFields"`
+	RelationToFields   []string `json:"relationToFields"`
 }
 
-func (f Field) Tags() string {
+func (f Field) Tags() (tags string) {
+	if f.Kind == "object" {
+		tags += f.relTags()
+	} else {
+		tags += f.dbTags()
+	}
+
+	return fmt.Sprintf("`bun:\"%s\"`", tags)
+}
+
+func (f Field) dbTags() string {
 	tags := f.DBName() + ",nullzero"
 
 	if f.PK {
@@ -30,20 +45,34 @@ func (f Field) Tags() string {
 		tags += ",unique"
 	}
 
-	return fmt.Sprintf("`bun:\"%s\"`", tags)
+	return tags
 }
 
-type FieldType string
+func (f Field) relTags() string {
+	tags := "rel:"
 
-func (ft FieldType) String() string {
-	switch ft {
+	if len(f.RelationFromFields) > 0 {
+		tags += fmt.Sprintf("belongs-to,join:%s=%s", strings.Join(f.RelationFromFields, ","), strings.Join(f.RelationToFields, ","))
+	} else if f.List {
+		tags += "has-many"
+	} else {
+		tags += "has-one"
+	}
+
+	return tags
+}
+
+func (f Field) GoType() string {
+	switch f.Type {
 	case "Int":
 		return "int"
 	case "String":
 		return "string"
+	case "Boolean":
+		return "bool"
 	case "DateTime":
 		return "time.Time"
 	default:
-		return string(ft)
+		return f.Type
 	}
 }

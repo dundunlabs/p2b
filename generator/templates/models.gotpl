@@ -13,11 +13,12 @@ const (
 {{end}}
 
 {{range $model := .Models -}}
-type {{$model.GoName}} struct {
+type {{$model.Name}} struct {
   bun.BaseModel `bun:"table:{{$model.DBName}}"`
   
   {{range $field := $model.Fields -}}
-    {{$field.GoName}} {{$field.Type}} {{$field.Tags}}
+    {{$field.GoName}} {{if $field.List}}[]{{end}}{{$field.GoType}} {{$field.Tags}}
   {{end}}
 }
+
 {{end}}

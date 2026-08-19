@@ -23,4 +23,17 @@ type User struct {
 	Email     string    `bun:"email,nullzero,notnull,unique"`
 	CreatedAt time.Time `bun:"created_at,nullzero,notnull"`
 	Role      Role      `bun:"role,nullzero,notnull"`
+	Posts     []Post    `bun:"rel:has-many"`
+}
+
+type Post struct {
+	bun.BaseModel `bun:"table:posts"`
+
+	ID        int       `bun:"id,nullzero,pk,notnull"`
+	CreatedAt time.Time `bun:"created_at,nullzero,notnull"`
+	UpdatedAt time.Time `bun:"updated_at,nullzero,notnull"`
+	Published bool      `bun:"published,nullzero,notnull"`
+	Title     string    `bun:"title,nullzero,notnull"`
+	Author    User      `bun:"rel:belongs-to,join:authorId=id"`
+	AuthorID  int       `bun:"author_id,nullzero,notnull"`
 }
