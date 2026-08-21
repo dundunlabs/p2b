@@ -72,6 +72,8 @@ func (f Field) GoType() string {
 		return "bool"
 	case "DateTime":
 		return "time.Time"
+	case "Decimal":
+		return "float64"
 	default:
 		return f.Type
 	}
