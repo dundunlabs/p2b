@@ -34,6 +34,6 @@ type Post struct {
 	UpdatedAt time.Time `bun:"updated_at,nullzero,notnull"`
 	Published bool      `bun:"published,nullzero,notnull"`
 	Title     string    `bun:"title,nullzero,notnull"`
-	Author    User      `bun:"rel:belongs-to,join:authorId=id"`
+	Author    User      `bun:"rel:belongs-to,join:author_id=id"`
 	AuthorID  int       `bun:"author_id,nullzero,notnull"`
 }

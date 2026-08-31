@@ -1,16 +1,43 @@
 package prisma
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 )
 
+var models = map[string]map[string]*Field{}
+
 type Model struct {
 	PrismaName
-	Fields []Field `json:"fields"`
+	Fields []*Field `json:"fields"`
+}
+
+func (m *Model) UnmarshalJSON(data []byte) error {
+	type Alias Model
+	a := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(m),
+	}
+
+	if err := json.Unmarshal(data, a); err != nil {
+		return err
+	}
+
+	model := map[string]*Field{}
+	for _, f := range m.Fields {
+		f.m = m
+		model[f.Name] = f
+	}
+	models[m.Name] = model
+
+	return nil
 }
 
 type Field struct {
+	m *Model
+
 	PrismaName
 	Type               string   `json:"type"`
 	Kind               string   `json:"kind"`
@@ -52,7 +79,14 @@ func (f Field) relTags() string {
 	tags := "rel:"
 
 	if len(f.RelationFromFields) > 0 {
-		tags += fmt.Sprintf("belongs-to,join:%s=%s", strings.Join(f.RelationFromFields, ","), strings.Join(f.RelationToFields, ","))
+		var ff, tf []string
+		for _, n := range f.RelationFromFields {
+			ff = append(ff, models[f.m.Name][n].DBName())
+		}
+		for _, n := range f.RelationToFields {
+			tf = append(tf, models[f.Type][n].DBName())
+		}
+		tags += fmt.Sprintf("belongs-to,join:%s=%s", strings.Join(ff, ","), strings.Join(tf, ","))
 	} else if f.List {
 		tags += "has-many"
 	} else {
