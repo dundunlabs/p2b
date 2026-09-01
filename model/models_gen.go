@@ -18,7 +18,7 @@ const (
 type User struct {
 	bun.BaseModel `bun:"table:User"`
 
-	ID        int       `bun:"id,nullzero,pk,notnull"`
+	ID        int       `bun:"id,nullzero,pk"`
 	Name      string    `bun:"name,nullzero"`
 	Email     string    `bun:"email,nullzero,notnull,unique"`
 	CreatedAt time.Time `bun:"created_at,nullzero,notnull"`
@@ -29,7 +29,7 @@ type User struct {
 type Post struct {
 	bun.BaseModel `bun:"table:posts"`
 
-	ID        int       `bun:"id,nullzero,pk,notnull"`
+	ID        int       `bun:"id,nullzero,pk"`
 	CreatedAt time.Time `bun:"created_at,nullzero,notnull"`
 	UpdatedAt time.Time `bun:"updated_at,nullzero,notnull"`
 	Published bool      `bun:"published,nullzero,notnull"`
