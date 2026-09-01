@@ -10,7 +10,8 @@ var models = map[string]map[string]*Field{}
 
 type Model struct {
 	PrismaName
-	Fields []*Field `json:"fields"`
+	Fields     []*Field    `json:"fields"`
+	PrimaryKey *PrimaryKey `json:"primaryKey"`
 }
 
 func (m *Model) UnmarshalJSON(data []byte) error {
@@ -31,6 +32,14 @@ func (m *Model) UnmarshalJSON(data []byte) error {
 		model[f.Name] = f
 	}
 	models[m.Name] = model
+
+	if m.PrimaryKey != nil {
+		for _, f := range m.PrimaryKey.Fields {
+			if mf, ok := model[f]; ok {
+				mf.PK = true
+			}
+		}
+	}
 
 	return nil
 }
@@ -60,7 +69,7 @@ func (f Field) Tags() (tags string) {
 }
 
 func (f Field) dbTags() string {
-	tags := f.DBName() + ",nullzero"
+	tags := f.DBName()
 
 	if f.PK {
 		tags += ",pk"
@@ -71,7 +80,7 @@ func (f Field) dbTags() string {
 		tags += ",unique"
 	}
 
-	return tags
+	return tags + ",nullzero"
 }
 
 func (f Field) relTags() string {
@@ -110,4 +119,8 @@ func (f Field) GoType() string {
 	default:
 		return f.Type
 	}
+}
+
+type PrimaryKey struct {
+	Fields []string `json:"fields"`
 }
