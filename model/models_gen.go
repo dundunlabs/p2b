@@ -18,22 +18,29 @@ const (
 type User struct {
 	bun.BaseModel `bun:"table:User"`
 
-	ID        int       `bun:"id,nullzero,pk"`
+	ID        int       `bun:"id,pk,nullzero"`
 	Name      string    `bun:"name,nullzero"`
-	Email     string    `bun:"email,nullzero,notnull,unique"`
-	CreatedAt time.Time `bun:"created_at,nullzero,notnull"`
-	Role      Role      `bun:"role,nullzero,notnull"`
+	Email     string    `bun:"email,notnull,unique,nullzero"`
+	CreatedAt time.Time `bun:"created_at,notnull,nullzero"`
+	Role      Role      `bun:"role,notnull,nullzero"`
 	Posts     []Post    `bun:"rel:has-many"`
 }
 
 type Post struct {
 	bun.BaseModel `bun:"table:posts"`
 
-	ID        int       `bun:"id,nullzero,pk"`
-	CreatedAt time.Time `bun:"created_at,nullzero,notnull"`
-	UpdatedAt time.Time `bun:"updated_at,nullzero,notnull"`
-	Published bool      `bun:"published,nullzero,notnull"`
-	Title     string    `bun:"title,nullzero,notnull"`
+	ID        int       `bun:"id,pk,nullzero"`
+	CreatedAt time.Time `bun:"created_at,notnull,nullzero"`
+	UpdatedAt time.Time `bun:"updated_at,notnull,nullzero"`
+	Published bool      `bun:"published,notnull,nullzero"`
+	Title     string    `bun:"title,notnull,nullzero"`
 	Author    User      `bun:"rel:belongs-to,join:author_id=id"`
-	AuthorID  int       `bun:"author_id,nullzero,notnull"`
+	AuthorID  int       `bun:"author_id,notnull,nullzero"`
+}
+
+type Like struct {
+	bun.BaseModel `bun:"table:Like"`
+
+	UserID int `bun:"user_id,pk,nullzero"`
+	PostID int `bun:"post_id,pk,nullzero"`
 }

@@ -29,6 +29,13 @@ model Post {
   @@map("posts")
 }
 
+model Like {
+  userId Int @map("user_id")
+  postId Int @map("post_id")
+
+  @@id([userId, postId])
+}
+
 enum Role {
   USER
   ADMIN
