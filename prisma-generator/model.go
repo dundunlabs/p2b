@@ -64,8 +64,7 @@ func (f Field) dbTags() string {
 
 	if f.PK {
 		tags += ",pk"
-	}
-	if f.Required {
+	} else if f.Required {
 		tags += ",notnull"
 	}
 	if f.Unique {
